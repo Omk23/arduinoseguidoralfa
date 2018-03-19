@@ -23,17 +23,19 @@ const int Sensor0 = //pin;
 const int IR2 = //pin;
 const int IR1 = //pin;
 
-int umbral = 520;
-const int vel1 = 90; //velocidad del motor inicial??
+//----------------Otras variables------------------
+int ValSensores; 
+//int umbral = 520; pruebo otra cosa, esto es privcional 
+int vel1 = 90; //velocidad del motor inicial??
 const int VelNula = 0; //velocidad 0
-const int VelR = 40; //provicional para la marcha atras.
+int VelR = 40; //provicional para la marcha atras.
 
 //------------defino los estados de los sensores---------
-int  IR5State;
-int  IR4State;
-int  Sensor0State;
-int  IR2State;
-int  IR1State;
+int  IR5State = 0;
+int  IR4State = 0;
+int  Sensor0State = 0;
+int  IR2State = 0;
+int  IR1State = 0;
 //-------------------------------------------------
 void setup(){
  
@@ -56,101 +58,6 @@ void setup(){
  
  
 }
-
-/*void loop(){
- 
-  //--------------------------------Prueba funcionamiento de los sensores.--------------------------------
-  //Leo el estado de los sensores.
- 
-  IR5State = digitalRead(IR5);
-  IR4State = digitalRead(IR4);
-  Sensor0State = digitalRead(Sensor0);
-  IR2State = digitalRead(IR2);
-  IR1State = digitalRead(IR1);
- 
-  //muestro si detectan la linea negra o no.
- 
-  if(IR5State==HIGH){Serial.print("||black = IR5||"); Serial.print("");}
-  if(IR5State==LOW){Serial.print("||white = IR5||"); Serial.print("");}
-
-  if(IR4State==HIGH){Serial.print("||black = IR4||"); Serial.print("");}
-  if(IR4State==LOW){Serial.print("||white = IR4||"); Serial.print("");}
-
-  if(Sensor0State==HIGH){Serial.print("||black = IR3(0)||"); Serial.print("");}
-  if(Sensor0State==LOW){Serial.print("||white = IR3(0)||"); Serial.print("");}
- 
-  if(IR2State==HIGH){Serial.print("||black = IR2||"); Serial.print("");}
-  if(IR2State==LOW){Serial.print("||white = IR2||"); Serial.print("");}
- 
-  if(IR1State==HIGH){Serial.print("||black = IR1||"); Serial.print("");}
-  if(IR1State==LOW){Serial.print("||white = IR1||"); Serial.print("");}
- 
-  Serial.println("*********************************");
-  delay(500);
- 
-  //---------------------------------------------------------------------------------------------------------
- 
-  //--------------------------------Funcionamiento del coche--------------------------------
-  //         IR5  IR4  IR3(0) IR2  IR1  (sensor mirandote)
-  //motor va en linea reca cuando los tres sensores del medio pasan por la linea negra.
-  
-    if(IR5State<umbral && IR4State<umbral && Sensor0State>umbral && IR2State<umbral && IR1State<umbral){ //va recto.
-    // 0  					0					1						0					0
-	MupIz(Vel1);
-    MupDer(Vel1);
-    
-    MdownIz (VelNula);
-    MdownDer (VelNula);
-    
-  }
- 
-  else if(IR5State<umbral && IR4State>umbral && Sensor0State>umbral && IR2State<umbral && IR1State<umbral  || IR5State>umbral && IR4State>umbral && Sensor0State>umbral && IR2State<umbral && IR1State<umbral){ //gira a la izquierda*/
-    // 			0  					1					1						0					0 	   || 	     1  				1					1						0					0
-	//prueba! giro up motor izquierdo down derecho en plan giro horario pero con ditinta velocidad. 
-	MupIz(VelNula);
-    MupDer(Vel1);
-    
-    MdownIz (VelR);
-    MdownDer (VelNula);
-	
-	//prueba 2! freno motor izquiero y solo activo el derecho. 
-	
-	/*MupIz(Vel1);
-    MupDer(VelNula);
-    
-    MdownIz (VelNula);
-    MdownDer (VelNula);*/
-  
-  }
-	
-	/*else if(IR5State<umbral && IR4State<umbral && Sensor0State>umbral && IR2State>umbral && IR1State>umbral || IR5State<umbral && IR4State<umbral && Sensor0State>umbral && IR2State>umbral && IR1State<umbral){  //giro a la derecha 
-	// 				0  					0					1					1					1		||  	0  					0					1						1					0
-	//prueba! giro up motor izquierdo down derecho en plan giro horario pero con ditinta velocidad. 
-	MupIz(Vel1);
-    MupDer(VelNula);
-    
-    MdownIz (VelR);
-    MdownDer (VelNula);
-	
-	//prueba 2! freno motor izquiero y solo activo el derecho. 
-	
-	MupIz(VelNula);
-    MupDer(Vel1;
-    
-    MdownIz (VelNula);
-    MdownDer (VelNula);*/
-	
-	
-	
-	/*else if(IR5State<umbral && IR4State<umbral && Sensor0State<umbral && IR2State<umbral && IR1State<umbral){
-		
-	MupIz(Vel1);
-    MupDer(vel1);
-    
-    MdownIz (VelNula);
-    MdownDer (VelNula);
-	}*/
-
 
   
     void hacia_delante(){
@@ -199,7 +106,19 @@ void setup(){
     MdownDer (VelNula);*/
  }
  
+ void encuentra_linea(){
+	
+ }
+ 
  void loop(){
+	 
+	 
+  //Pongo en marcha los moteres:
+  digitalWrite (MupDer, HIGH);
+  digitalWrite (MupIz, HIGH);
+  
+  digitalWrite (MdownDer, LOW);
+  digitalWrite (MdownIz, LOW);
 	 
   //--------------------------------Prueba funcionamiento de los sensores.--------------------------------
   //Leo el estado de los sensores.
@@ -209,6 +128,9 @@ void setup(){
   Sensor0State = digitalRead(Sensor0);
   IR2State = digitalRead(IR2);
   IR1State = digitalRead(IR1);
+  
+  //Combinacion de los valores totales de los sensores para la comprobacion 
+  ValSensores = (IR5State * 10000) + (IR4State * 1000) + (Sensor0State * 100) + (IR2State * 10) + (IR1State);
  
   //muestro si detectan la linea negra o no.
  
@@ -233,17 +155,35 @@ void setup(){
 	 
   //--------------------------------Funcionamiento del coche--------------------------------
   //         IR5  IR4  IR3(0) IR2  IR1  (sensor mirandote)
-  //motor va en linea reca cuando los tres sensores del medio pasan por la linea negra.
   
-    if(IR5State<umbral && IR4State<umbral && Sensor0State>umbral && IR2State<umbral && IR1State<umbral){ //va recto.
-    // 0  					0					1						0					0
-	hacia_delante();
-    }
-	 
-	 
-	 
-	 
+  switch (ValSensores){
+	  
+	  case 100:
+	  hacia_delante;
+	  break;
+	  
+	  case 1110:
+	  hacia_delante;
+	  break;
+	  
+	  case 110:  //giro izquierda
+	  giro_izquierda; 
+	  break;
+	  
+	  case 111: //giro más cerrado izquierda
+	  giro_izquierda;
+	  break;
+	  
+	  case 1100://giro derecha
+	  giro_derecha;
+	  break;
+	  
+	  case 11100://giro más cerrado izquierda
+	  giro_derecha;
+	  break;
+	  
+	  default:
+	  
+  }
+
  }
- 
- 
- 
